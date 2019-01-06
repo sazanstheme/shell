@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+rpm -Uvh https://copr-be.cloud.fedoraproject.org/results/@spacewalkproject/spacewalk-2.8/epel-7-x86_64/00736372-spacewalk-repo/spacewalk-repo-2.8-11.el7.centos.noarch.rpm
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+(cd /etc/yum.repos.d && curl -O https://copr.fedorainfracloud.org/coprs/g/spacewalkproject/java-packages/repo/epel-7/group_spacewalkproject-java-packages-epel-7.repo)
+yum -y install spacewalk-setup-postgresql spacewalk-postgresql wget perl-Frontier-RPC perl-Text-Unidecode perl-XML-Simple
+#
+mkdir /usr/share/spcwlk-tmp/
+echo 'admin-email = root@localhost
+ssl-set-cnames = spcwlkserver
+ssl-set-org = Unicorn
+ssl-set-org-unit = EOH
+ssl-set-city = Prague
+ssl-set-state = SCK
+ssl-set-country = CZ
+ssl-password = verystrong
+ssl-set-email = root@localhost
+ssl-config-sslvhost = Y
+db-backend=postgresql
+db-name=spcwlkdb
+db-user=spcwlkuser
+db-password=verystrong
+db-host=localhost
+db-port=5432
+enable-tftp=Y' > /usr/share/spcwlk-tmp/spcwlk_answer
+spacewalk-setup --answer-file=/usr/share/spcwlk-tmp/spcwlk_answer
+#
+systemctl stop firewalld
+systemctl disable firewalld
+#
