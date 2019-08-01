@@ -1,0 +1,5 @@
+echo 1>/sys/class/block/sda/device/rescan
+fdisk /dev/sda
+partprobe -s
+pvresize /dev/sda2
+lvextend -L +5G /dev/mapper/vg_system01-opt /dev/sda2 && xfs_growfs /dev/mapper/vg_system01-opt
